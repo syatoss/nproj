@@ -8,23 +8,24 @@
 projectName=""
 languages=(js python c bash ts)
 react=false
+paths="/home/stasbenko/Desktop/stasmain/projects/bash/nproj/paths.config"
 
-projectDirPath=$(<paths.config)
+projectDirPath=$(<$paths)
 projectDirPath=$(echo "$projectDirPath" | grep projectDirPath)
 projectDirPath=${projectDirPath#*=}
 
 newGithubRepo=true
 lang=0
 
-githubURL=$(<paths.config)
+githubURL=$(<$paths)
 githubURL=$(echo "$githubURL" | grep githubURL)
 githubURL=${githubURL#*=}
 
-templatePath=$(<paths.config)
+templatePath=$(<$paths)
 templatePath=$(echo "$templatePath" | grep templatePath)
 templatePath=${templatePath#*=}
 
-githubProfile=$(<paths.config)
+githubProfile=$(<$paths)
 githubProfile=$(echo "$githubProfile" | grep githubProfile)
 githubProfile=${githubProfile#*=}
 
@@ -68,7 +69,6 @@ $githubURL/$githubProfile/$projectName"
 function startJsProject {
 
     if ! $react ; then
-        echo "inside the if"
         cp $templatePath/{index.html,index.css,index.js} ./
         python3 $templatePath/modify.py $projectDirPath index.html $projectName
 
@@ -83,8 +83,6 @@ function startJsProject {
     npx create-react-app client
     cd client
     cd src
-    mv App.js ${projectName^}.js
-    mv App.css ${projectName^}.css
     mkdir components && cd ../..
 
 }
@@ -92,8 +90,7 @@ function startJsProject {
 function startTsProject {
 
 
-    if [ $react != ture ]; then
-        echo "inside the if"
+    if ! $react; then
         cp $templatePath/{index.html,index.css,index.js} ./
         python3 $templatePath/modify.py $projectDirPath index.html $projectName
 
@@ -109,8 +106,6 @@ function startTsProject {
     npx create-react-app client --template typescript
     cd client
     cd src
-    mv App.ts ${projectName^}.ts
-    mv App.css ${projectName^}.css
     mkdir components && cd ../..
 
 }
@@ -161,12 +156,6 @@ do
 done
 
 
-echo "name: $projectName
-language: ${languages[$lang]}
-react: $react
-github: $newGithubRepo"
-
-
 projectDirPath=$projectDirPath/${languages[lang]}
 
 if [[ "${languages[lang]}" == "js" || "${languages[lang]}" == "ts" ]]; then
@@ -189,20 +178,6 @@ ${startProject[lang]}
 if  $newGithubRepo ; then
     createNewGithubRepo $githubProfile $projectName
 fi
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
